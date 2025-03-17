@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Real-Time Notifications</title>
+  </head>
+  <body>
+    <h1>Real-Time Notifications</h1>
+    <div id="notifications"></div>
+
+    <script>
+      // Connect to the WebSocket server
+      const ws = new WebSocket('ws://localhost:8088');
+
+      // Display notifications received from the WebSocket
+      ws.onmessage = event => {
+        const notificationsDiv = document.getElementById('notifications');
+        const message = document.createElement('div');
+        message.textContent = `Notification: ${event.data}`;
+        notificationsDiv.appendChild(message);
+      };
+
+      ws.onopen = () => console.log('WebSocket connection opened');
+      ws.onclose = () => console.log('WebSocket connection closed');
+    </script>
+  </body>
+</html>
