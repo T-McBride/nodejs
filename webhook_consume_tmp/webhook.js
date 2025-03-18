@@ -18,12 +18,12 @@ router.post('/', [
   if (!errors.isEmpty()) {
     console.log(errors.mapped());
     console.log("errors")
-    return res.send('errors', { errors: errors.mapped() })
+    return res.status(200).json({ message: "Errors!" })
   }else{
     //publish the webhook somewhere 
     postHTTP(JSON.stringify(req.body))
     console.log('no errors')
-    return res.send('validation pass');
+    return res.status(200).json({ message: "Success" })
   }
 });
 

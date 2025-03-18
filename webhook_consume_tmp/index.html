@@ -4,14 +4,25 @@
     <meta charset="UTF-8" />
     <title>Real-Time Notifications</title>
   </head>
-  <body>
+ <body>
+    <h1>Webhook POC app</h1>
+    <ul>
+    <li>Standard app served on port 3000</li>
+      <ul>
+        <li>Receives webhooks as POST at endpoint /webhooks and validates
+        <li>Validated webhooks will create a POST request to websocket server on port 8088</li>
+      </ul>
+    <li>Websocket server on port 8088</li>
+      <ul>
+        <li>Received notifications are pushed to main page "Real-Time Notifications"</li>
+      </ul>
+    </ul>
+    <img src="./images/flowchart.svg"/>
     <h1>Real-Time Notifications</h1>
     <div id="notifications"></div>
-
     <script>
       // Connect to the WebSocket server
       const ws = new WebSocket('ws://localhost:8088');
-
       // Display notifications received from the WebSocket
       ws.onmessage = event => {
         const notificationsDiv = document.getElementById('notifications');
@@ -19,9 +30,9 @@
         message.textContent = `Notification: ${event.data}`;
         notificationsDiv.appendChild(message);
       };
-
       ws.onopen = () => console.log('WebSocket connection opened');
       ws.onclose = () => console.log('WebSocket connection closed');
+      
     </script>
-  </body>
+ </body>
 </html>
