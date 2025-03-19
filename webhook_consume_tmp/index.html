@@ -2,24 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Real-Time Notifications</title>
+    <title>Simple Webhook Demo</title>
   </head>
  <body>
     <h1>Webhook POC app</h1>
     <ul>
     <li>Standard app served on port 3000</li>
       <ul>
-        <li>Receives webhooks as POST at endpoint /webhooks and validates
-        <li>Validated webhooks will create a POST request to websocket server on port 8088</li>
+        <li>Receives subscribed webhooks as endpoint <b>/webhooks</b> and validates
+        <li>e.g. <i>curl --header "Content-Type: application/json" --request POST -d '{"message":"Any message longer than 8 chars"}' http://localhost:3000/webhook</i><br>Extra fields may be passed and use in validation at this layer</li>
       </ul>
-    <li>Websocket server on port 8088</li>
+      <li>Validated webhooks can then be split, parsed, and publised to multiple places {ICE endpoints, vendors, internal apps, etc}<br>
+      In this example validated webhooks create a seperate POST request to a websocket server running on port 8088. This websocket pushes fake data to this page. This could just as easliy be any ICE / vendor endpoint.</li>
       <ul>
-        <li>Received notifications are pushed to main page "Real-Time Notifications"</li>
-      </ul>
     </ul>
     <img src="./images/flowchart.svg"/>
-    <h1>Real-Time Notifications</h1>
-    <div id="notifications"></div>
+    <hr>
+    <h2>Real-Time Notifications</h2>
+    <p id="notifications"></p>
     <script>
       // Connect to the WebSocket server
       const ws = new WebSocket('ws://localhost:8088');
@@ -27,12 +27,10 @@
       ws.onmessage = event => {
         const notificationsDiv = document.getElementById('notifications');
         const message = document.createElement('div');
-        message.textContent = `Notification: ${event.data}`;
+        message.textContent = `${event.data}`;
         notificationsDiv.appendChild(message);
       };
       ws.onopen = () => console.log('WebSocket connection opened');
       ws.onclose = () => console.log('WebSocket connection closed');
-      
-    </script>
  </body>
 </html>

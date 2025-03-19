@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-
+const { faker } = require ('@faker-js/faker');
 const { check, query, validationResult } = require('express-validator')
 
 /* GET users listing. */
@@ -21,11 +21,27 @@ router.post('/', [
     return res.status(200).json({ message: "Errors!" })
   }else{
     //publish the webhook somewhere 
-    postHTTP(JSON.stringify(req.body))
-    console.log('no errors')
+    console.log(JSON.stringify(req.body))
+    console.log(fData())
+    postHTTP(fData())
     return res.status(200).json({ message: "Success" })
   }
 });
+
+function fData() {
+//  const fData = '{"message":"' + faker.getGUID() + 
+//  ' ' + faker.getLoanNum() + ' ' + faker.getEvent() + '"}'  
+//  return(fData)
+    const fData = '{"message":"GUID:' + faker.string.uuid() + 
+    ', \\r\\n Loan Num:' + faker.helpers.arrayElement(['000','142','141', '214']) + '25' + faker.helpers.replaceSymbols('####') + 
+    ', \\r\\n Type: ' + faker.helpers.arrayElement(['Conventional', 'FHA', 'VA', 'USDA']) + 
+    ', \\r\\n Action: ' + faker.helpers.arrayElement(['Started', 'Processing', 'Submitted', 'Resubmitted','Cleared to Close', 'Locked']) + 
+    ', \\r\\n Borrower: ' + faker.person.fullName() + 
+    ', \\r\\n Address:  ' + faker.location.streetAddress() + ' ' + faker.location.city() + ' ' + faker.location.state({abbreviated: true}) + ' ' + faker.location.zipCode() +  
+    '"}'
+    return(fData)
+}
+
 
 const http = require("http");
 

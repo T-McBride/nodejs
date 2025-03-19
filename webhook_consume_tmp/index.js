@@ -16,6 +16,7 @@ app.use('/webhook', webhook)
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
 
+
 //Default
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/index.html'));
