@@ -3,23 +3,86 @@
   <head>
     <meta charset="UTF-8" />
     <title>Simple Webhook Demo</title>
+  <style>
+    body {
+      min-height: 100vh;
+      position: relative;
+      margin: 0;
+      padding-bottom: 60px;
+      display: block;
+    }
+    header { 
+      height: 60px;
+      width: 100%;
+      background-color: #ddd;
+      text-align: center;
+    }
+    footer {
+      position: absolute;
+      bottom: 0;
+      height: 60px;
+      width: 100%;
+      background-color: #ccc;
+      color: #555;
+    }
+    .content {
+      max-width: 1024px;
+      margin: auto;
+    }
+    #attribution {
+      width: 30%;
+      float: right;
+      margin: 20px;
+      padding: 20px;
+      background-color: #eee;
+    } 
+  </style>
   </head>
- <body>
-    <h1>Webhook POC app</h1>
-    <ul>
-    <li>Standard app served on port 3000</li>
-      <ul>
-        <li>Receives subscribed webhooks as endpoint <b>/webhooks</b> and validates
-        <li>e.g. <i>curl --header "Content-Type: application/json" --request POST -d '{"message":"Any message longer than 8 chars"}' http://localhost:3000/webhook</i><br>Extra fields may be passed and use in validation at this layer</li>
+  <body>
+    <header>
+      <h1 class="content" text-align="center">Webhook POC app</h1>
+    </header>
+    <div class="content">
+     <div id="attribution">
+        <img style="float:right;padding:10px" src="./images/X25.jpg" width=100/>
+        This is a simple of example of the concept presented by <a href="https://www.linkedin.com/in/vishweshvpatil/"> Vishwesh Patil</a> at the X25 ROI session. 
+      </div>
+      <div id="info">
+        <h2>Setup / Overview</h2>
+        <ul>
+          <li>Standard html app served on port 3000</li>
+          <ul>
+            <li>This app receives 'subscribed' webhooks at endpoint <b>/webhooks</b> 
+            <li>Extra fields may be passed and used in validation at this layer</li>
+          </ul>
+          <li>Validated webhooks can then be split, parsed, and publised to multiple places {ICE endpoints, vendors, internal apps, etc}</li>
+        </ul>
+      <img src="./images/flowchart.svg"/>
+      <h2>This Example</h2>
+      This example accepts webhooks (POST requests) to ./webhooks/... 
+      <ul> 
+        <li>fdata : this endpoint will create a POST request to the websocket server containing fake loan data</li>
+        <ul> 
+          <li><i>curl --header "Content-Type: application/json" --request POST -d '{"message":"Any message longer than 8 chars"}' http://localhost:3000/webhook/fdata</i></li>
+          <li>This request will be validated and generate fake loan data</li>
+          <li><i>curl --header "Content-Type: application/json" --request POST -d '{"message":"short"}' http://localhost:3000/webhook/fdata</i></li>
+          <li>This request will fail validation for being too short and workflow will not continue</li>
+        </ul>
+        <li>fevent : this endpoint will create a POST request to the websocket server containing fake loan event data</li>
+         <ul> 
+          <li>curl --header "Content-Type: application/json" --request POST -d '{"message":"Any message longer than 8 chars"}' http://localhost:3000/webhook/fevent</i></li>
+          <li>This request will be validated and generate fake loan events</li>
+        </ul>
       </ul>
-      <li>Validated webhooks can then be split, parsed, and publised to multiple places {ICE endpoints, vendors, internal apps, etc}<br>
-      In this example validated webhooks create a seperate POST request to a websocket server running on port 8088. This websocket pushes fake data to this page. This could just as easliy be any ICE / vendor endpoint.</li>
-      <ul>
-    </ul>
-    <img src="./images/flowchart.svg"/>
-    <hr>
-    <h2>Real-Time Notifications</h2>
-    <p id="notifications"></p>
+      Both endpoints require a JSON data string containing message and message must be greater than 8 charecters. In a real production example these POST requests would bot to ICE endpoints and use the data previously passed / validated by the webhooks. 
+      </div>
+      <hr>
+      <h2>Live Event Notifications</h2>
+      <div id="notifications"></div>
+    </div>
+    <footer>
+      just a footer
+    </footer>
     <script>
       // Connect to the WebSocket server
       const ws = new WebSocket('ws://localhost:8088');
@@ -31,6 +94,8 @@
         notificationsDiv.appendChild(message);
       };
       ws.onopen = () => console.log('WebSocket connection opened');
-      ws.onclose = () => console.log('WebSocket connection closed');
- </body>
+      s.onclose = () => console.log('WebSocket connection closed');
+    </script>
+
+  </body>
 </html>
