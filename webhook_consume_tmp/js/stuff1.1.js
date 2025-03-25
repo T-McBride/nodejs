@@ -1,5 +1,6 @@
 const { faker } = require ('@faker-js/faker')
-const http = require('https');
+const https = require('https');
+const http = require("http");
 
 exports.ICEgetPipeline = () => {
   const options = {
@@ -13,10 +14,42 @@ exports.ICEgetPipeline = () => {
     }
   };
   var data = '{"GUID":"abc123"}'  
-  const req = http
+  const req = https
     .request(options, res => {
       let data = ''
       console.log('ICE loanPipeline Status Code:', res.statusCode)
+      res.on('data', chunk => {
+        data += chunk
+      })
+      res.on('end', () => {
+        //console.log('Body: ', data)
+      })
+    })
+    .on('error', err => {
+      console.log('Error: ', err.message)
+    })
+  req.write(data)
+  req.end()
+  //console.log(JSON.stringify(req));
+}
+
+
+exports.WSNotify = (data) => {
+  const options = {
+    hostname: 'localhost',
+    port: '8088',
+    path: '/notify',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': data.length
+    }
+  }
+
+  const req = http
+    .request(options, res => {
+      let data = ''
+      console.log('WS Notify Status Code:', res.statusCode)
       res.on('data', chunk => {
         data += chunk
       })
@@ -29,8 +62,9 @@ exports.ICEgetPipeline = () => {
     })
   req.write(data)
   req.end()
-  console.log(JSON.stringify(req));
 }
+
+
 
 exports.getFakeEvent = () => {
     const fData = '{"message":"GUID:' + faker.string.uuid() + 
@@ -52,4 +86,5 @@ exports.getFakeData = () => {
     ', \\r\\n Amount: ' + faker.finance.amount() +
     '"}'
     return(fData)
+
 }

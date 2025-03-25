@@ -2,27 +2,19 @@
 const express = require("express")
 const bodyParser = require("body-parser")
 const path = require("path")
+const router = require("./router.js")
+const ws = require("./js/ws.js");
 
 // Initialize express and define a port
 const app = express()
 const PORT = 3000
 
-// Tell express to use body-parser's JSON parsing
 app.use(bodyParser.json())
-
-//Routes
-const webhook = require("./webhook.js")
-app.use('/webhook', webhook)
 app.use('/images', express.static(path.join(__dirname, 'images')))
-
-
-
-//Default
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/index.html'));
-});
-
-const ws = require("./ws.js");
+app.use('/js', express.static(path.join(__dirname, 'js')))
+app.use('/pages', express.static(path.join(__dirname, 'pages')))
+app.use('/css', express.static(path.join(__dirname, 'css')))
+app.use('/', router);
 
 // Start express on the defined port
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))

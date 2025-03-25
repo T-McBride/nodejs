@@ -1,13 +1,26 @@
 const express = require('express')
 const router = express.Router()
-const stuff = require ('./stuff1.0.js');
+const path = require("path") 
+const stuff = require ('./js/stuff1.0.js');
 const { check, query, validationResult } = require('express-validator')
 
-router.get('/', (req, res, next) => {
-  var payload = JSON.stringify(req.query)
-  payload = payload + JSON.stringify(req.body)
-  res.send(payload)
+
+//Main
+router.get('/', (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, '/pages/index.html'));
 });
+router.get('/nav', (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, '/pages/nav.html'));
+});
+router.get('/about', (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, '/pages/about.html'));
+});
+router.get('/demo', (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, '/pages/demo.html'));
+});
+
+
+
 
 router.post('/fdata', [
   check('message', 'Message cannot be empty').notEmpty(),

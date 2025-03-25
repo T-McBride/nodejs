@@ -1,0 +1,14 @@
+
+table {
+  width: 100%;
+  margin: auto;
+}
+
+td {
+  width: 33.3%;
+  padding: 4px;
+  border: 1px solid;
+  border-color: #ddd;
+}
+
+
