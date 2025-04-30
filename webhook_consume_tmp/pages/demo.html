@@ -24,7 +24,7 @@
         <hr>
         <div class="row">
           <div class="col-12">
-            <h3>Endpoints</h3>
+            <h2>Endpoints</h2>
             <ul>
               <li>localhost:3000/fdata</li>
               <ol>
@@ -49,9 +49,22 @@
         <hr>
         <div class="row">
           <div class="col-12">
-            <h4>Notifications</h4>
+            <h2>Notifications</h2>
             <p>Data shown below is received from the webserver running on port 8088. This data simulates the results of a secondary process(es)</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3">
+            <h3>Message</h3>
             <div id="notifications"></div>
+          </div>
+          <div class="col-3">
+            <h3>Action</h3>
+            <div id="actions"></div>
+          </div>
+          <div class="col-6">
+            <h3>Loan Data</h3>
+            <div id="loandata"></div>
           </div>
         </div><!--row-->
       </div><!--container-->
@@ -63,10 +76,27 @@
          const ws = new WebSocket('ws://localhost:8088');
          // Display notifications received from the WebSocket
          ws.onmessage = event => {
+           //parse data
+           const dat = JSON.parse(`${event.data}`)
+           //Messages 
            const notificationsDiv = document.getElementById('notifications');
-           const message = document.createElement('div');
-           message.textContent = `${event.data}`;
+           const message = document.createElement('div')
+           message.textContent = dat.message
            notificationsDiv.appendChild(message);
+           //Action
+           const actionDiv = document.getElementById('actions');
+           const action = document.createElement('div')
+           action.textContent = dat.action
+           actionDiv.appendChild(action);
+           //Loan Data
+           const loandataDiv = document.getElementById('loandata');
+           const loandata = document.createElement('div')
+           loandata.textContent = dat.GUID   
+           //loandataDiv.appendChild(loandata);
+           loandata.textContent += dat.loanData
+           loandataDiv.appendChild(loandata);
+           //console.log(data.message) 
+           //message.textContent = `${event.data}`;
          };
          ws.onopen = () => console.log('WebSocket connection opened');
          ws.onclose = () => console.log('WebSocket connection closed');

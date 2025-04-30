@@ -2,7 +2,7 @@ const { faker } = require ('@faker-js/faker')
 const https = require('https');
 const http = require("http");
 
-exports.ICEgetPipeline = () => {
+exports.ICEgetPipeline = async () => {
   const options = {
     method: 'POST',
     hostname: 'api.elliemae.com',
@@ -13,24 +13,24 @@ exports.ICEgetPipeline = () => {
       'content-type': 'application/json'
     }
   };
-  var data = '{"GUID":"abc123"}'  
+  var data = '{"GUID":"abc123"}'
+  var fdata = ""
   const req = https
     .request(options, res => {
       let data = ''
-      console.log('ICE loanPipeline Status Code:', res.statusCode)
+      this.WSNotify('{"message":"subprocess ICE getPipeline","action": "Response code: ' + res.statusCode + '","loanData":"n/a"}')
       res.on('data', chunk => {
         data += chunk
       })
       res.on('end', () => {
-        //console.log('Body: ', data)
+        return(data)
       })
     })
     .on('error', err => {
-      console.log('Error: ', err.message)
+      return(err.message)
     })
   req.write(data)
   req.end()
-  //console.log(JSON.stringify(req));
 }
 
 
@@ -45,46 +45,37 @@ exports.WSNotify = (data) => {
       'Content-Length': data.length
     }
   }
-
   const req = http
     .request(options, res => {
       let data = ''
-      console.log('WS Notify Status Code:', res.statusCode)
       res.on('data', chunk => {
         data += chunk
       })
       res.on('end', () => {
-        console.log('Body: ', data)
+        //console.log('Body: ', data)
       })
     })
     .on('error', err => {
-      console.log('Error: ', err.message)
+      console.log('stuff.WSNotify Error: ', err.message)
     })
   req.write(data)
   req.end()
 }
 
-
-
 exports.getFakeEvent = () => {
-    const fData = '{"message":"GUID:' + faker.string.uuid() + 
-    ', \\r\\n Loan Num:' + faker.helpers.arrayElement(['000','142','141', '214']) + '25' + faker.helpers.replaceSymbols('####') + 
-    ', \\r\\n Action: ' + faker.helpers.arrayElement(['Order Flood', 'Order Fraud', 'UDM on', 'Smart Fees','Credit']) + 
+    const fData = '{"message":"subprocess fake event created", "action": "Fake event created: ' + faker.helpers.arrayElement(['Order Flood', 'Order Fraud', 'UDM on', 'Smart Fees','Credit','Appraisal Ordered']) + '"' + 
+    ', "loanData": "{GUID: ' + faker.string.uuid() + 
+    ', OrderNumber: ' + faker.string.ulid() + '}' +
     '"}'
     return(fData)
 }
 
 exports.getFakeData = () => {
-    const fData = '{"message":"GUID:' + faker.string.uuid() + 
-    ', \\r\\n Loan Num:' + faker.helpers.arrayElement(['000','142','141', '214']) + '25' + faker.helpers.replaceSymbols('####') + 
-    ', \\r\\n Type: ' + faker.helpers.arrayElement(['Conventional', 'FHA', 'VA', 'USDA']) + 
-    ', \\r\\n Action: ' + faker.helpers.arrayElement(['Started', 'Processing', 'Submitted', 'Resubmitted','Cleared to Close', 'Locked']) + 
-    ', \\r\\n Borrower: ' + faker.person.fullName() + 
-    ', \\r\\n Address:  ' + faker.location.streetAddress() + ' ' + faker.location.city() + ' ' + faker.location.state({abbreviated: true}) + ' ' + faker.location.zipCode() +  
-    ', \\r\\n Account Type: ' + faker.finance.accountName() + 
-    ', \\r\\n Account Number: ' + faker.finance.accountNumber() + 
-    ', \\r\\n Amount: ' + faker.finance.amount() +
-    '"}'
+     const fData = '{"message":"subprocess fake data created", "action": "Fake data created"' + 
+      ', "loanData" : "{GUID: ' + faker.string.uuid() + ', LoanNum: ' + faker.helpers.arrayElement(['000','142','141', '214']) + '25' + faker.helpers.replaceSymbols('####') + 
+      ', Name: ' + faker.person.fullName() + 
+      ', Address: ' + faker.location.streetAddress() + ' ' + faker.location.city() + ' ' + faker.location.state({abbreviated: true}) + ' ' + faker.location.zipCode() + 
+      ', AccountName: ' + faker.finance.accountName() + ' ' + faker.finance.accountNumber() + ' ' + faker.finance.amount() + '}"' +
+      '}'
     return(fData)
-
 }

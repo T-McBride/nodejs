@@ -25,15 +25,15 @@ wss.on('connection', ws => {
 // Endpoint to send notifications to all connected clients
 app.use(express.json());
 app.post('/notify', (req, res) => {
-  const { message } = req.body;
-
+  const { message, GUID } = req.body;
+  //console.log("WS notify received a body of " + JSON.stringify(req.body))
   // Broadcast the message to all connected WebSocket clients
   wss.clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
-      client.send(message);
+      //client.send(message);
+      client.send(JSON.stringify(req.body));
     }
   });
-
   res.send('Notification sent');
 });
 
